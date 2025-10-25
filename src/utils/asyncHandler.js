@@ -1,0 +1,25 @@
+//2 ways : 1 -> promises 2 -> try catch with async await
+
+//Promise Approach
+const asyncHandler = (requestHandler) => {
+    (req , res , next ) => {
+        Promise.resolve(requestHandler(req , res , next)).catch((error) => next(error));
+    }
+}
+
+export {asyncHandler}
+
+//Try Catch Approach
+/*
+const asyncHandler = (fn) => async (req , res, next) => {
+    try{
+        await fn(req , res , next);
+    }
+    catch(error){
+        res.send(error.code || 500).json({
+            success : false,
+            message : error.message
+        })
+    }
+}
+    */

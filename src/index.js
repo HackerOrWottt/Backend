@@ -9,6 +9,15 @@ dotenv.config({
 
 //Better Approach
 connectDB()
+.then(() => {
+    app.listen(process.env.PORT || 8000 , () => {
+        console.log(`Server is listening on PORT : ${process.env.PORT || 8000}`);
+    })
+})
+.catch((error) => {
+    console.error("Error Occured" , error);
+    throw error;
+});
 
 //1st approach
 /*import express from "express"
