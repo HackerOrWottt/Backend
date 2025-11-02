@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-const userSchema = new monogoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -52,7 +52,7 @@ userSchema.pre("save", async function (next) {
   //only encrypt the password if it is new or modified
   if (!this.isModified("password")) return next(); //no changes in password
 
-  this.password = bcrypt.hash(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
