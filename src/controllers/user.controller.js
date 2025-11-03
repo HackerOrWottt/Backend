@@ -5,11 +5,17 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const registerUser = asyncHandler( async (req , res) => {
+    //console.log("✅ /register route hit");
+
+    //console.log("Incoming Content-Type:", req.headers["content-type"]);
+    //console.log("req.body:", req.body);
+    //console.log("req.files:", req.files);
+
     //steps to register user 
 
     //Step 1 : Get user details from the frontend -> Raw data and Files handling
     const {username , password , email , fullName} = req.body;
-    console.log("Email : " , email);
+    //console.log("Email : " , email);
 
     //Step 2 : Validate the user details
     //2 Ways : First check each field using if else individually that it is present or not 
@@ -17,12 +23,12 @@ const registerUser = asyncHandler( async (req , res) => {
     if(
         [username , password , email , fullName].some((field) => field?.trim() === "")
     ){
-        throw new ApiError(400 , "ALl fields are required");
+        throw new ApiError(400 , "All fields are required");
     }
 
     //check if user already exists
     //check for user with same name or email in the DB
-    const existingUser = User.findOne({
+    const existingUser = await User.findOne({
         $or : [
             { email } , { username }
         ]
@@ -34,8 +40,8 @@ const registerUser = asyncHandler( async (req , res) => {
     }
 
     //Step 3 : check for images , check for avatar (Uploaded On local server using multer)
-    const localAvatarPath = req.files?.avatar[0]?.path; //path of avatar image on local server
-    const localCoverImageLocalPath = req.files?.coverImage[0]?.path; //path of cover image on local server
+    const localAvatarPath = req.files?.avatar?.[0]?.path; //path of avatar image on local server
+    const localCoverImageLocalPath = req.files?.coverImage?.[0]?.path; //path of cover image on local server
 
     if(!localAvatarPath){
         //the avatar image is not upload on our local server successfully
@@ -44,7 +50,7 @@ const registerUser = asyncHandler( async (req , res) => {
 
     //Step 4 : upload them to cloudinary
     const avatar = await uploadOnCloudinary(localAvatarPath); //upload avatar to cloudinary
-    const coverImage = await uploadOnCloudinary(localAvatarPath); //upload cover image on cloudinary
+    const coverImage = await uploadOnCloudinary(localCoverImageLocalPath); //upload cover image on cloudinary
 
     if(!avatar){
         throw new ApiError(500 , "Error in uploading avatar image");
@@ -67,7 +73,7 @@ const registerUser = asyncHandler( async (req , res) => {
 
     
     //Step 7 : check for user creation success
-    if(!createUser){
+    if(!createdUser){
         throw new ApiError(500 , "User Registration Failed");
     }
 

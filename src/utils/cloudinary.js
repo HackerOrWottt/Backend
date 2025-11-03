@@ -1,4 +1,5 @@
 import {v2 as cloudinary} from "cloudinary";
+import { configDotenv } from "dotenv";
 import fs from "fs";
 
 //upload take place in two step , 1st -> upload the file on local server from the user 2nd -> upload the file to cloudinary servere from the local server
@@ -19,15 +20,15 @@ const uploadOnCloudinary = async (LocalFilePath) => {
         })
 
         //file has been upload successfully on cloudinary server
-        console.log("File uploaded on cloudinary successfully" , response.url);
-
+        //console.log("File uploaded on cloudinary successfully" , response.url);
+        await fs.unlinkSync(LocalFilePath);
         return response;
     }
     catch (error){
         //error , remove file from our local server
-        fs.unlinkSync(LocalFilePath);
+        await fs.unlinkSync(LocalFilePath);
         return null;
     }
 }
 
-export { uploadOnCloudinary};
+export { uploadOnCloudinary };
