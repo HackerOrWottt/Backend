@@ -42,7 +42,7 @@ const registerUser = asyncHandler( async (req , res) => {
     //Step 3 : check for images , check for avatar (Uploaded On local server using multer)
     const localAvatarPath = req.files?.avatar?.[0]?.path; //path of avatar image on local server
     const localCoverImageLocalPath = req.files?.coverImage?.[0]?.path; //path of cover image on local server
-
+    
     if(!localAvatarPath){
         //the avatar image is not upload on our local server successfully
         throw new ApiError(400 , "Avatar is Required")
