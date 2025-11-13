@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { loginUser, registerUser } from "../controllers/user.controller.js";
+import { loginUser, logoutUser, registerUser } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const userRouter = Router();
 
-//console.log("✅ userRouter loaded"); // <--- Add this
+//console.log("✅ userRouter loaded");
 
 userRouter.route("/register").post(
     //files uploading using multer middleware 
@@ -22,5 +23,7 @@ userRouter.route("/register").post(
 );
 
 userRouter.route("/login").post(loginUser);
+
+userRouter.route("/logout").post(verifyJWT , logoutUser);
 
 export default userRouter;

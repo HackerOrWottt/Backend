@@ -155,4 +155,39 @@ const loginUser = asyncHandler(async (req , res) => {
     )
 })
 
-export { registerUser , loginUser }
+const logoutUser = asyncHandler(async (req , res) => {
+    //we have to find the logged in user , to log out , but we do not find the user by providing a form 
+    //instead of that we use a middleware 
+
+    //Steps
+    
+    //reset access and refresh tokens
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set : {
+                refreshToken : undefined
+            }
+        },
+        {
+            new : true //this helps us to return a new updated response 
+        }
+    )
+
+    //Clear the cookies
+    const options = {
+        httpOnly : true,
+        secure : true
+    }
+
+    return res.
+    status(200)
+    .clearCookie("accessToken" , options)
+    .clearCookie("refreshToken" , options)
+    .json(
+        new ApiResponse(200 , {} , "User logged out")
+    )
+     
+})
+
+export { registerUser , loginUser , logoutUser }
