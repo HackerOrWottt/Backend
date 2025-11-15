@@ -9,7 +9,7 @@ const generateAccessAndRefreshToken = async(userId) => {
     try {
         const user = await User.findById(userId)
 
-        const accessToken = user.generateAccesToken()
+        const accessToken = user.generateAccessToken()
         const refreshToken = user.generateRefreshToken()
 
         //we save Refresh token in our DB as well
@@ -102,11 +102,11 @@ const registerUser = asyncHandler( async (req , res) => {
     )
 })
 
-const loginUser = asyncHandler(async (req , res) => {
+const loginUser = asyncHandler( async (req , res) => {
     //Steps to follow 
 
     //get the username and password from the user / req body
-    const {username , email , password} = req.body
+    const {username , email , password} = req.body;
 
     //check if we got username or email  
     if(!username && !email){
@@ -115,7 +115,7 @@ const loginUser = asyncHandler(async (req , res) => {
 
     //check if user is present in DB
     const user = await User.findOne({
-        $or : [{username , email}]
+        $or : [{username} , {email}]
     })
 
     if(!user){
