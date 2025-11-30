@@ -243,4 +243,43 @@ const refreshAccessToken = asyncHandler(async (req , res) => {
     }
 })
 
-export { registerUser , loginUser , logoutUser , refreshAccessToken }
+const changeCurrentPass = asyncHandler(async (req , res) => {
+    //steps
+
+    const {oldPassword , newPassword} = req.body;
+
+    //find the user
+    const user = await User.findById(req.user?._id)
+
+    //check if old password is correct or not 
+    const isValidPass = await user.isPasswordCorrect(oldPassword);
+
+    if(!isValidPass){
+        throw new ApiError(401 , "Password is Incorrect , Check password and try again");
+    }
+
+    //change the password
+    user.password = newPassword;
+    await user.save({validateBeforeSave : false});
+
+    //return the response
+    return res.
+    status(200)
+    .json(
+        new ApiResponse(200 , {} , "Password Changed Successfully")
+    )
+})
+
+const getCurrentUser = asyncHandler(async (req , res) => {
+    return res.
+    status(200).
+    json(
+        new ApiResponse(200 , req.user , "Current User Fetched Successfully")
+    )
+})
+
+const updateAccountDetails = asyncHandler(async (req , res) => {
+    const {fullName , email} = req.body
+})
+
+export { registerUser , loginUser , logoutUser , refreshAccessToken , changeCurrentPass , getCurrentUser , updateAccountDetails}
